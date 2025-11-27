@@ -167,3 +167,9 @@ h2 {
         width: 100%;
     }
 }
+.gallery-thumb:hover {
+    opacity: 0.75;
+    transform: scale(1.05);
+    transition: 0.2s;
+}
+
