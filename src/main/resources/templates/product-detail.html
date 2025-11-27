@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="layout :: content">
+
+<body>
+
+<div class="row">
+
+    <div class="col-md-5">
+        <img th:if="${product.imageLarge != null}"
+             th:src="@{/images/{img}(img=${product.imageLarge})}"
+             class="img-fluid rounded border"
+             alt="Product Image">
+    </div>
+
+    <div class="col-md-7">
+
+        <h2 th:text="${product.productName}">Product Name</h2>
+
+        <p class="text-muted mt-3"
+           th:text="${product.description}">Product description</p>
+
+        <h4 class="text-success fw-bold mt-4"
+            th:text="'€ ' + ${product.price}">
+            € 0.00
+        </h4>
+
+        <a href="/products" class="btn btn-secondary mt-4">Back to Shop</a>
+
+    </div>
+
+</div>
+
+</body>
+</html>
