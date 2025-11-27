@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="layout :: layout(~{::content})">
+<div th:fragment="content">
+
+  <h2>Product Search</h2>
+  <hr>
+
+  <form action="/products/search/results" method="get" class="row g-3">
+
+    <div class="col-md-4">
+      <label class="form-label">Product Name</label>
+      <input type="text" class="form-control" name="name">
+    </div>
+
+    <div class="col-md-4">
+      <label class="form-label">Category</label>
+      <input type="text" class="form-control" name="category">
+    </div>
+
+    <div class="col-md-4">
+      <label class="form-label">Description Keyword</label>
+      <input type="text" class="form-control" name="keyword">
+    </div>
+
+    <div class="col-md-2">
+      <label class="form-label">Min Price</label>
+      <input type="number" class="form-control" step="0.01" name="minPrice">
+    </div>
+
+    <div class="col-md-2">
+      <label class="form-label">Max Price</label>
+      <input type="number" class="form-control" step="0.01" name="maxPrice">
+    </div>
+
+    <div class="col-md-3">
+      <label class="form-label">Sort</label>
+      <select name="sort" class="form-select">
+        <option value="">-- None --</option>
+        <option value="recent">Recently Added</option>
+      </select>
+    </div>
+
+    <div class="col-md-12">
+      <button class="btn btn-primary mt-3">Search</button>
+    </div>
+
+  </form>
+
+</div>
+</html>
