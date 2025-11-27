@@ -1,35 +1,153 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      th:replace="layout :: content">
+      th:replace="~{layout :: layout(~{::content})}">
+</html>
 
-<body>
+<div th:fragment="content">
 
-<div class="row">
+    <div class="row">
 
-    <div class="col-md-5">
-        <img th:if="${product.imageLarge != null}"
-             th:src="@{/images/{img}(img=${product.imageLarge})}"
-             class="img-fluid rounded border"
-             alt="Product Image">
+        <!-- 左边大图 -->
+        <div class="col-md-5">
+            <img th:if="${product.featureImage != null}"
+                 th:src="@{/images/large/{pid}/{img}(pid=${product.productId}, img=${product.featureImage})}"
+                 class="img-fluid rounded border mb-3"
+                 alt="Product Image">
+
+            <!-- 如果你有多张图，可以再写几张（或者 th:each） -->
+            <!--
+            <img th:src="@{/images/large/{pid}/2.jpg(pid=${product.productId})}" ... >
+            -->
+        </div>
+
+        <!-- 右边详情 -->
+        <div class="col-md-7">
+            <h2 th:text="${product.productName}">Product Name</h2>
+
+            <!-- 分类名称 -->
+            <p class="text-muted">
+                Category:
+                <span th:text="${product.categoryId != null ? product.categoryId.categoryName : 'Uncategorised'}">
+                    Category Name
+                </span>
+            </p>
+
+            <!-- 评分 -->
+            <p class="mb-1">
+                Average Rating:
+                <span th:text="${#numbers.formatDecimal(avgRating, 1, 1)}">4.5</span>
+                / 5
+            </p>
+
+            <!-- 库存状态 -->
+            <p class="mb-1">
+                Stock:
+                <span th:text="${stockStatus}">In Stock</span>
+                (<span th:text="${availableQuantity}">10</span> available)
+            </p>
+
+            <!-- 描述 -->
+            <p class="text-muted mt-3" th:text="${product.description}">
+                Product description
+            </p>
+
+            <!-- 价格 & 打折价 -->
+            <div class="mt-4">
+                <span class="text-muted me-2" th:if="${product.discountedPrice != null && product.discountedPrice < product.price}">
+                    <s th:text="'€ ' + ${product.price}">€ 0.00</s>
+                </span>
+
+                <span class="text-success fw-bold fs-4"
+                      th:text="${product.discountedPrice != null && product.discountedPrice < product.price} ?
+                               '€ ' + ${product.discountedPrice} :
+                               '€ ' + ${product.price}">
+                    € 0.00
+                </span>
+            </div>
+
+            <!-- 按钮：Add to Wishlist + 返回 -->
+            <div class="mt-4">
+                <a th:href="@{/wishlist/add(productId=${product.productId})}"
+                   class="btn btn-outline-primary me-2">
+                    Add to Wishlist
+                </a>
+
+                <a href="/products" class="btn btn-secondary">Back to Shop</a>
+            </div>
+        </div>
     </div>
 
-    <div class="col-md-7">
+    <!-- Reviews 区域：只显示 rating >= 3 的（我们在 controller 已过滤） -->
+    <hr class="mt-5">
 
-        <h2 th:text="${product.productName}">Product Name</h2>
+    <h3 class="mt-4">Customer Reviews</h3>
 
-        <p class="text-muted mt-3"
-           th:text="${product.description}">Product description</p>
+    <div class="mt-3">
+        <div th:if="${#lists.isEmpty(reviews)}">
+            <p class="text-muted">No reviews with rating 3 or above.</p>
+        </div>
 
-        <h4 class="text-success fw-bold mt-4"
-            th:text="'€ ' + ${product.price}">
-            € 0.00
-        </h4>
+        <div th:each="review : ${reviews}" class="mb-4 p-3 border rounded bg-light">
 
-        <a href="/products" class="btn btn-secondary mt-4">Back to Shop</a>
+            <div class="d-flex justify-content-between">
+                <strong class="mb-2">
+                    <!-- 客户城市 + 名字 -->
+                    <span th:text="${review.customerId.city + ' - ' + review.customerId.firstName}">
+                        Dublin - John
+                    </span>
+                </strong>
 
+                <span class="text-muted small"
+                      th:text="${#dates.format(review.reviewDate, 'yyyy-MM-dd')}">
+                    2025-11-27
+                </span>
+            </div>
+
+            <p class="mb-1">
+                <strong>Rating:</strong>
+                <span th:text="${review.rating}">5</span> / 5
+            </p>
+
+            <p th:text="${review.reviewText}">
+                Review text here...
+            </p>
+        </div>
+    </div>
+
+    <!-- Wishlisted By 区域 -->
+    <hr class="mt-5">
+
+    <h3 class="mt-4">Wishlisted By</h3>
+
+    <div class="mt-3">
+        <div th:if="${product.wishlistList == null or product.wishlistList.isEmpty()}">
+            <p class="text-muted">No one has added this product to their wishlist yet.</p>
+        </div>
+
+        <div th:each="wish : ${product.wishlistList}"
+             class="mb-4 p-3 border rounded bg-white shadow-sm">
+
+            <div class="d-flex justify-content-between">
+                <strong>
+                    <span th:text="${wish.customerId.firstName + ' ' + wish.customerId.lastName}">
+                        Customer Name
+                    </span>
+                </strong>
+
+                <span class="text-muted small"
+                      th:text="${#dates.format(wish.addedDate, 'yyyy-MM-dd')}">
+                    2025-11-27
+                </span>
+            </div>
+
+            <p class="fw-bold mt-2" th:text="${wish.wishlistName}">
+                My Wishlist
+            </p>
+
+            <p class="text-muted" th:text="${wish.notes}">
+                Notes about this product...
+            </p>
+        </div>
     </div>
 
 </div>
-
-</body>
-</html>

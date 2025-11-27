@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: layout(~{::content})}">
+</html>
+
+<div th:fragment="content">
+
+  <h2 class="mb-4">My Wishlist</h2>
+
+  <div th:if="${#lists.isEmpty(wishlists)}">
+    <p class="text-muted">Your wishlist is empty.</p>
+  </div>
+
+  <div th:if="${!#lists.isEmpty(wishlists)}">
+    <table class="table table-striped">
+      <thead>
+      <tr>
+        <th>Wishlist Name</th>
+        <th>Product</th>
+        <th>Notes</th>
+        <th>Added Date</th>
+        <th></th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="wish : ${wishlists}">
+        <td th:text="${wish.wishlistName}">My Wishlist</td>
+        <td>
+          <a th:href="@{/products/{id}(id=${wish.productId.productId})}"
+             th:text="${wish.productId.productName}">
+            Product Name
+          </a>
+        </td>
+        <td th:text="${wish.notes}">Notes...</td>
+        <td th:text="${#dates.format(wish.addedDate, 'yyyy-MM-dd')}">2025-11-27</td>
+        <td>
+          <a th:href="@{/wishlist/delete/{id}(id=${wish.wishlistId})}"
+             class="btn btn-sm btn-outline-danger">
+            Remove
+          </a>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
